@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Søknader og planer, Nordreisa</title>
+<meta name="description" content="Passordbeskyttet samleside for planer og søknader.">
+<style>
+  :root { --ink:#1c2830; --muted:#55636d; --line:#d7dee3; --bg:#f4f6f7; --card:#ffffff; --accent:#1f4a5c; --accent2:#2f6f83; --red:#a3001b; --soft:#e9f0f3; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.55 Calibri, "Segoe UI", Arial, sans-serif; }
+  main { max-width:900px; margin:0 auto; padding:28px 16px 60px; }
+  .login { max-width:420px; margin:12vh auto 0; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:28px 24px; }
+  .login h1 { margin:0 0 6px; font-size:24px; color:var(--accent); }
+  .login p { margin:0 0 18px; color:var(--muted); }
+  label { display:block; font-weight:600; margin-bottom:6px; }
+  input[type=password] { width:100%; font:inherit; padding:12px 14px; border:1px solid #9fb0bb; border-radius:8px; }
+  button { font:inherit; cursor:pointer; }
+  .go { margin-top:14px; width:100%; padding:12px; border:0; border-radius:8px; background:var(--accent); color:#fff; font-weight:700; }
+  .go:disabled { opacity:.6; cursor:wait; }
+  .err { color:var(--red); min-height:1.5em; margin-top:10px; font-weight:600; }
+  :focus-visible { outline:3px solid #0b5cad; outline-offset:2px; }
+  .top h1 { font-size:34px; margin:4px 0 8px; color:var(--accent); line-height:1.15; }
+  .eyebrow { margin:0; color:var(--muted); font-size:15px; letter-spacing:.02em; }
+  .lead { font-size:19px; margin:0 0 12px; }
+  .warn { background:#fff4f4; border-left:4px solid var(--red); padding:10px 14px; margin:0 0 16px; font-size:15px; }
+  .tabs { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .tabs a { background:var(--accent); color:#fff; text-decoration:none; padding:8px 16px; border-radius:999px; font-weight:700; }
+  .proj { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:22px 22px 10px; margin-top:22px; }
+  .proj h2 { margin:0 0 10px; font-size:24px; color:var(--accent); line-height:1.2; }
+  .proj h3 { margin:26px 0 10px; font-size:19px; color:var(--accent2); }
+  figure { margin:16px 0; }
+  figure img { width:100%; height:auto; border-radius:8px; border:1px solid var(--line); display:block; background:#fff; }
+  figcaption { font-size:14px; color:var(--muted); margin-top:6px; }
+  .hint { color:var(--accent2); }
+  .facts { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin:16px 0; }
+  .facts div { background:var(--soft); border-radius:10px; padding:12px; }
+  .facts b { display:block; font-size:22px; color:var(--accent); }
+  .facts span { font-size:14px; color:var(--muted); }
+  ul.files { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+  .dl { background:#fff; border:1px solid var(--accent2); color:var(--accent); border-radius:8px; padding:9px 14px; font-weight:700; text-align:left; }
+  .dl:hover { background:var(--soft); }
+  .kb { color:var(--muted); font-size:14px; margin-left:6px; }
+  .printall { display:flex; gap:14px; align-items:center; flex-wrap:wrap; background:var(--soft); border-radius:12px; padding:14px 16px; margin:0 0 16px; }
+  .printall span { font-size:15px; color:var(--muted); flex:1 1 260px; }
+  .dl.big { background:var(--accent); color:#fff; border-color:var(--accent); font-size:19px; padding:12px 22px; }
+  .dl.big:hover { background:var(--accent2); }
+  .lnk.dl { border:0; background:none; padding:0; color:#0b5cad; text-decoration:underline; font-weight:600; font-size:15px; }
+  ul.miss li { margin:4px 0; }
+  ul.miss li::marker { color:var(--red); }
+  .foot { margin-top:30px; color:var(--muted); font-size:14px; text-align:center; }
+  .box { position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; padding:10px; z-index:9; }
+  .box.on { display:flex; }
+  .box img { max-width:100%; max-height:100%; background:#fff; }
+  .box button { position:absolute; top:12px; right:12px; padding:8px 14px; border:0; border-radius:8px; font-weight:700; }
+  @media (max-width:640px) { .facts { grid-template-columns:repeat(2, 1fr); } .top h1 { font-size:27px; } }
+  @media print { .tabs, .login, .box, ul.files { display:none !important; } body { background:#fff; } .proj { border:0; } }
+</style>
+</head>
+<body>
+<main id="app">
+  <form class="login" id="f">
+    <h1>Søknader og planer</h1>
+    <p>Denne siden er passordbeskyttet. Skriv inn passordet du har fått.</p>
+    <label for="pw">Passord</label>
+    <input type="password" id="pw" autocomplete="current-password" required autofocus>
+    <button class="go" id="go" type="submit">Åpne</button>
+    <div class="err" id="err" role="alert"></div>
+  </form>
+</main>
+<div class="box" id="box" role="dialog" aria-label="Stor visning"><button type="button" id="lukk">Lukk</button><img id="boximg" alt=""></div>
+<script>
+(function () {
+  var SALT = '0plBwUVQFGjFA9OKuAEZVA==', ITER = 600000, key = null;
+  function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  async function derive(pw) {
+    var base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(SALT), iterations: ITER, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+  }
+  async function hent(url) {
+    var r = await fetch(url, { cache: 'no-store' }); if (!r.ok) throw new Error('Fant ikke ' + url);
+    var u = new Uint8Array(await r.arrayBuffer());
+    return crypto.subtle.decrypt({ name: 'AES-GCM', iv: u.slice(0, 12) }, key, u.slice(12));
+  }
+  function koble() {
+    document.querySelectorAll('.dl').forEach(function (b) {
+      b.addEventListener('click', async function () {
+        var t = b.textContent; b.disabled = true; b.textContent = 'Henter ...';
+        var vindu = b.dataset.open ? window.open('', '_blank') : null;
+        try {
+          var data = await hent('data/' + b.dataset.f + '.bin');
+          var pdf = /\.pdf$/i.test(b.dataset.n);
+          var url = URL.createObjectURL(new Blob([data], { type: pdf ? 'application/pdf' : 'application/octet-stream' }));
+          if (vindu) { vindu.location.href = url; }
+          else { var a = document.createElement('a'); a.href = url; a.download = b.dataset.n; document.body.appendChild(a); a.click(); a.remove(); }
+        } catch (e) { if (vindu) vindu.close(); alert('Nedlastingen feilet. Prøv igjen.'); }
+        b.disabled = false; b.textContent = t;
+      });
+    });
+    var box = document.getElementById('box'), bi = document.getElementById('boximg');
+    document.querySelectorAll('.zoom').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); bi.src = a.querySelector('img').src; box.classList.add('on'); document.getElementById('lukk').focus(); });
+    });
+    function lukk() { box.classList.remove('on'); bi.src = ''; }
+    document.getElementById('lukk').addEventListener('click', lukk);
+    box.addEventListener('click', function (e) { if (e.target === box) lukk(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lukk(); });
+  }
+  document.getElementById('f').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var go = document.getElementById('go'), err = document.getElementById('err');
+    go.disabled = true; go.textContent = 'Åpner ...'; err.textContent = '';
+    try {
+      key = await derive(document.getElementById('pw').value);
+      var html = new TextDecoder().decode(await hent('data/innhold.bin'));
+      document.getElementById('app').innerHTML = html;
+      koble();
+    } catch (x) {
+      key = null; err.textContent = 'Feil passord. Prøv igjen.';
+      go.disabled = false; go.textContent = 'Åpne';
+    }
+  });
+})();
+</script>
+</body>
+</html>
