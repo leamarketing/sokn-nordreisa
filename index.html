@@ -90,8 +90,9 @@
         var vindu = b.dataset.open ? window.open('', '_blank') : null;
         try {
           var data = await hent('data/' + b.dataset.f + '.bin');
-          var pdf = /\.pdf$/i.test(b.dataset.n);
-          var url = URL.createObjectURL(new Blob([data], { type: pdf ? 'application/pdf' : 'application/octet-stream' }));
+          var ext = b.dataset.n.split('.').pop().toLowerCase();
+          var mime = ext === 'pdf' ? 'application/pdf' : ext === 'mp4' ? 'video/mp4' : ext === 'pptx' ? 'application/vnd.openxmlformats-officedocument.presentationml.presentation' : 'application/octet-stream';
+          var url = URL.createObjectURL(new Blob([data], { type: mime }));
           if (vindu) { vindu.location.href = url; }
           else { var a = document.createElement('a'); a.href = url; a.download = b.dataset.n; document.body.appendChild(a); a.click(); a.remove(); }
         } catch (e) { if (vindu) vindu.close(); alert('Nedlastingen feilet. Prøv igjen.'); }
